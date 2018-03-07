@@ -1,0 +1,14 @@
+logs/*
+dumps/
+*.swo
+.DS_Store
+.Python
+.remedy_api/
+*.pyc
+config/*
+!config/*.sample
+!config/wsdl/
+config/wsdl/*
+!config/wsdl/*.sample
+*.swp
+__pycache__
