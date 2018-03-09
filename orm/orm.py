@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from config import db_settings
-from orm.models import *
+from models import *
 
 def db_connect(connection):
     """
