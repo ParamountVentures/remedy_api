@@ -51,11 +51,15 @@ def enquiries():
   if request.args.get('page'):
     page = request.args.get('page')
     q = q.offset(int(per_page) * int(page))
+  else:
+    page = 1
 
   # Limit per page
   q = q.limit(per_page)
-
+  print('before results')
   results = q.all()
+  print('after results')
+  print("queried results")
   data = {'meta':{}, 'data':[]}
   ## Add meta
   data['meta'] = {
