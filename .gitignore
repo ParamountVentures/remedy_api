@@ -5,10 +5,6 @@ dumps/
 .Python
 .remedy_api/
 *.pyc
-config/*
-!config/*.sample
-!config/wsdl/
-config/wsdl/*
-!config/wsdl/*.sample
+env.sh
 *.swp
 __pycache__

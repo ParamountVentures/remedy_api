@@ -1,15 +1,38 @@
-from flask import Flask, request, jsonify
+from functools import wraps
+from flask import Flask, request, jsonify, Response
 from orm.models import *
 from orm.orm import create_session
 from sqlalchemy import func
 from datetime import datetime
+import os 
 
 # Session
-session = create_session(Base, 'docker_local')
+conn = os.environ['PG_CONN'] if "PG_CONN" in os.environ else 'docker_local'
+
 
 # App 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+
+# Auth
+def check_auth(username, password):
+  return username==os.environ['AUTH_USER'] and password==os.environ['AUTH_PASSWORD']
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
 
 # API
 @app.route('/', methods=['GET'])
@@ -17,7 +40,11 @@ def index():
   return "it works"
 
 @app.route('/api/v1/enquiries', methods=['GET'])
+@requires_auth
 def enquiries():
+  session = create_session(Base, conn)
+
+  ### Call topics
   categories = ["FOI", "FOI Review", "FOI Form Request", "EIR"]
 
   # Set up query
@@ -72,3 +99,5 @@ def enquiries():
     data['data'].append(r.data)
   return jsonify(data)
 
+  ### Close session
+  session.close
