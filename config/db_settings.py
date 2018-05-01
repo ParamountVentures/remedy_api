@@ -36,7 +36,7 @@ connections = {
 }
  
 ### Set environment variables
-ECHO = False
+ECHO = True
  
 ### App settings
  
